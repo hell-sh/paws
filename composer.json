@@ -1,0 +1,25 @@
+{
+	"name": "hell-sh/paws",
+	"description": "A lightweight library for spinning up websocket clients and servers.",
+	"keywords": [
+		"async",
+		"asynchronous",
+		"websocket",
+		"websocket-client",
+		"websocket-server"
+	],
+	"homepage": "https://github.com/hell-sh/paws",
+	"type": "library",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"paws\\": "src/"
+		}
+	},
+	"require": {
+		"php": "^7.0"
+	},
+	"require-dev": {
+		"hell-sh/nose": "^1.1"
+	}
+}
