@@ -4,6 +4,9 @@ use RuntimeException;
 /** A websocket connection. */
 abstract class Connection
 {
+	/**
+	 * @var resource|null $resource
+	 */
 	public $stream;
 
 	function isOpen(): bool
@@ -143,7 +146,8 @@ abstract class Connection
 					$frame = new BinaryFrame($data);
 					break;
 				case 8: // Close
-					fclose($this->stream);
+					@fclose($this->stream);
+					$this->stream = null;
 					break;
 				case 9: // Ping
 					if(!$this instanceof ServerConnection)
