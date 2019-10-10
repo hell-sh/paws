@@ -1,10 +1,13 @@
 <?php
 namespace paws;
 use Exception;
-use RuntimeException;
 /** A client-to-server websocket connection. */
 class ServerConnection extends Connection
 {
+	/**
+	 * @param string $url
+	 * @throws Exception
+	 */
 	function __construct(string $url)
 	{
 		$components = parse_url($url);
@@ -29,7 +32,7 @@ class ServerConnection extends Connection
 		$this->stream = stream_socket_client(($secure ? "ssl://" : "").$components["host"].":".(@$components["port"] ?? ($secure ? 443 : 80)), $errno, $errstr);
 		if(!$this->isOpen())
 		{
-			throw new RuntimeException("Failed to connect to WebSocket server: $errstr ($errno)");
+			throw new Exception("Failed to connect to WebSocket server: $errstr ($errno)");
 		}
 		try
 		{
@@ -49,12 +52,12 @@ class ServerConnection extends Connection
 		$accept_pos = stripos($res, "Sec-WebSocket-Accept:");
 		if(substr($res, 0, 12) != "HTTP/1.1 101" || $accept_pos === false)
 		{
-			throw new RuntimeException("Received unexpected response to WebSocket handshake: ".$res);
+			throw new Exception("Received unexpected response to WebSocket handshake: ".$res);
 		}
 		$hash = Server::hashKey($key);
 		if(substr(trim(substr($res, $accept_pos + 21)), 0, strlen($hash)) != $hash)
 		{
-			throw new RuntimeException("WebSocket server failed to correctly hash WebSocket key {$key}. Response: ".$res);
+			throw new Exception("WebSocket server failed to correctly hash WebSocket key {$key}. Response: ".$res);
 		}
 		stream_set_blocking($this->stream, false);
 	}

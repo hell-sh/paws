@@ -12,4 +12,6 @@ abstract class Frame
 	{
 		$this->data = $data;
 	}
+
+	abstract function __toString();
 }

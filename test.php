@@ -1,9 +1,7 @@
-<?php
-/** @noinspection PhpUnhandledExceptionInspection */
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 require_once "vendor/autoload.php";
-use paws\Server;
-use paws\ServerConnection;
-use paws\TextFrame;
+use paws\
+{Server, ServerConnection, TextFrame};
 class PawsTest
 {
 	function testHashKey()
