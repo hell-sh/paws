@@ -46,11 +46,6 @@ class Server
 		$this->clients = new SplObjectStorage();
 	}
 
-	static function hashKey(string $key): string
-	{
-		return base64_encode(sha1($key."258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
-	}
-
 	/**
 	 * Accepts new clients.
 	 *
@@ -99,6 +94,11 @@ class Server
 		return $this;
 	}
 
+	static function hashKey(string $key): string
+	{
+		return base64_encode(sha1($key."258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
+	}
+
 	/**
 	 * Deals with all connected clients.
 	 *
@@ -106,7 +106,9 @@ class Server
 	 */
 	function handle(): Server
 	{
-		$frame_function = $this->frame_function ?? function(){};
+		$frame_function = $this->frame_function ?? function()
+			{
+			};
 		foreach($this->clients as $con)
 		{
 			/**
@@ -134,7 +136,9 @@ class Server
 				}
 				catch(Exception $e)
 				{
-					$con->writeFrame(new TextFrame($e->getMessage()))->flush()->close();
+					$con->writeFrame(new TextFrame($e->getMessage()))
+						->flush()
+						->close();
 				}
 			}
 			if(!$con->isOpen())

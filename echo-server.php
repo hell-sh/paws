@@ -6,7 +6,8 @@ $stream = stream_socket_server("tcp://0.0.0.0:80", $errno, $errstr) or die(" {$e
 $server = new Server($stream);
 $server->frame_function = function(ClientConnection $con, Frame $frame)
 {
-	$con->writeFrame($frame)->flush();
+	$con->writeFrame($frame)
+		->flush();
 };
 do
 {

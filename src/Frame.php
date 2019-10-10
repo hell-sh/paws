@@ -2,11 +2,11 @@
 namespace paws;
 abstract class Frame
 {
+	const OP_CODE = 2;
 	/**
 	 * @var string $data
 	 */
 	public $data;
-	const OP_CODE = 2;
 
 	function __construct(string $data)
 	{
