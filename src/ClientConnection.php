@@ -11,7 +11,6 @@ class ClientConnection extends Connection
 
 	function __construct($stream, string $path = "", string $host = "")
 	{
-		stream_set_blocking($stream, false);
 		$this->stream = $stream;
 		$this->path = $path;
 		$this->host = $host;
