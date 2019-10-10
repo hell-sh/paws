@@ -143,7 +143,10 @@ class Server
 			}
 			if(!$con->isOpen())
 			{
-				($this->disconnect_function)($con);
+				if($this->disconnect_function)
+				{
+					($this->disconnect_function)($con);
+				}
 				$this->clients->detach($con);
 			}
 		}
