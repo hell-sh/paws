@@ -5,17 +5,33 @@ use RuntimeException;
 abstract class Connection
 {
 	/**
+	 * The connection is closed and was never open. Only a possible with ServerConnection.
+	 */
+	const STATUS_CONNECT_FAILED = 0;
+	/**
+	 * The connection is open.
+	 */
+	const STATUS_OPEN = 1;
+	/**
+	 * The connection was open and had been closed properly.
+	 */
+	const STATUS_CLOSED = 2;
+	/**
+	 * The connection was open but was lost without a proper goodbye.
+	 */
+	const STATUS_LOST = 3;
+	/**
+	 * @var int $status
+	 */
+	public $status = Connection::STATUS_CONNECT_FAILED;
+	/**
 	 * @var resource|null $resource
 	 */
 	public $stream;
 
-	function isOpen(): bool
-	{
-		return $this->stream != null && @feof($this->stream) === false;
-	}
-
 	function close()
 	{
+		$this->status = Connection::STATUS_CLOSED;
 		@fwrite($this->stream, "\x88\x00");
 		if($this instanceof ServerConnection)
 		{
@@ -39,6 +55,14 @@ abstract class Connection
 	 */
 	function readFrame(float $timeout = 3.000)
 	{
+		if($this->stream === null || @feof($this->stream))
+		{
+			if($this->status == Connection::STATUS_OPEN)
+			{
+				$this->status = Connection::STATUS_LOST;
+			}
+			return null;
+		}
 		$frame = null;
 		$start = microtime(true);
 		do
@@ -148,6 +172,7 @@ abstract class Connection
 				case 8: // Close
 					@fclose($this->stream);
 					$this->stream = null;
+					$this->status = Connection::STATUS_CLOSED;
 					break;
 				case 9: // Ping
 					if(!$this instanceof ServerConnection)

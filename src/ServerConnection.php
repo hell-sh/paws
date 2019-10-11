@@ -30,10 +30,11 @@ class ServerConnection extends Connection
 		}
 		$secure = ($components["scheme"] == "wss");
 		$this->stream = stream_socket_client(($secure ? "ssl://" : "").$components["host"].":".(@$components["port"] ?? ($secure ? 443 : 80)), $errno, $errstr);
-		if(!$this->isOpen())
+		if($this->stream === null || @feof($this->stream))
 		{
 			throw new Exception("Failed to connect to WebSocket server: $errstr ($errno)");
 		}
+		$this->status = Connection::STATUS_OPEN;
 		try
 		{
 			$key = base64_encode(random_bytes(16));

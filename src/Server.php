@@ -162,7 +162,7 @@ class Server
 			/**
 			 * @var ClientConnection $con
 			 */
-			if($con->isOpen())
+			if($con->status == Connection::STATUS_OPEN)
 			{
 				try
 				{
@@ -189,7 +189,7 @@ class Server
 						->close();
 				}
 			}
-			if(!$con->isOpen())
+			if($con->status != Connection::STATUS_OPEN)
 			{
 				if($this->disconnect_function)
 				{

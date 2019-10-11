@@ -6,7 +6,7 @@ if(empty($argv[1]))
 require "vendor/autoload.php";
 use hellsh\pai;
 use paws\
-{ServerConnection, TextFrame};
+{Connection, ServerConnection, TextFrame};
 echo "Connecting...";
 $con = new ServerConnection($argv[1]);
 echo " Connection established.";
@@ -29,5 +29,5 @@ do
 		time_nanosleep(0, $remaining * 1000000000);
 	}
 }
-while($con->isOpen());
+while($con->status == Connection::STATUS_OPEN);
 echo "\nConnection closed.\n";
