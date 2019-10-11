@@ -170,6 +170,7 @@ class Server
 					if($con->disconnect_after != 0 && $con->disconnect_after <= microtime(true))
 					{
 						$con->close();
+						$con->status = Connection::STATUS_LOST;
 					}
 					else if($con->next_ping != 0 && $con->next_ping <= microtime(true))
 					{

@@ -26,23 +26,33 @@ class ClientConnection extends Connection
 
 	function writeFrame(Frame $frame): ClientConnection
 	{
-		fwrite($this->stream, chr(0x80 | $frame::OP_CODE));
-		$length = strlen($frame->data);
-		if($length < 0x7E)
+		if($this->stream === null || @feof($this->stream))
 		{
-			fwrite($this->stream, chr($length));
-		}
-		else if($length < 0xFFFF)
-		{
-			fwrite($this->stream, "\x7E");
-			fwrite($this->stream, pack("n", $length));
+			if($this->status == Connection::STATUS_OPEN)
+			{
+				$this->status = Connection::STATUS_LOST;
+			}
 		}
 		else
 		{
-			fwrite($this->stream, "\x7F");
-			fwrite($this->stream, pack("n", $length));
+			@fwrite($this->stream, chr(0x80 | $frame::OP_CODE));
+			$length = strlen($frame->data);
+			if($length < 0x7E)
+			{
+				@fwrite($this->stream, chr($length));
+			}
+			else if($length < 0xFFFF)
+			{
+				@fwrite($this->stream, "\x7E");
+				@fwrite($this->stream, pack("n", $length));
+			}
+			else
+			{
+				@fwrite($this->stream, "\x7F");
+				@fwrite($this->stream, pack("n", $length));
+			}
+			@fwrite($this->stream, $frame->data);
 		}
-		fwrite($this->stream, $frame->data);
 		return $this;
 	}
 }

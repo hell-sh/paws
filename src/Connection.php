@@ -31,21 +31,41 @@ abstract class Connection
 
 	function close()
 	{
-		$this->status = Connection::STATUS_CLOSED;
-		@fwrite($this->stream, "\x88\x00");
-		if($this instanceof ServerConnection)
+		if($this->stream === null || @feof($this->stream))
 		{
-			@fwrite($this->stream, pack("N", rand(1, 0x7FFFFFFF)));
+			if($this->status == Connection::STATUS_OPEN)
+			{
+				$this->status = Connection::STATUS_LOST;
+			}
 		}
-		fclose($this->stream);
-		$this->stream = null;
+		else
+		{
+			$this->status = Connection::STATUS_CLOSED;
+			@fwrite($this->stream, "\x88\x00");
+			if($this instanceof ServerConnection)
+			{
+				@fwrite($this->stream, pack("N", rand(1, 0x7FFFFFFF)));
+			}
+			fclose($this->stream);
+			$this->stream = null;
+		}
 	}
 
 	abstract function writeFrame(Frame $frame);
 
 	function flush(): Connection
 	{
-		fflush($this->stream);
+		if($this->stream === null || @feof($this->stream))
+		{
+			if($this->status == Connection::STATUS_OPEN)
+			{
+				$this->status = Connection::STATUS_LOST;
+			}
+		}
+		else
+		{
+			@fflush($this->stream);
+		}
 		return $this;
 	}
 
@@ -55,14 +75,6 @@ abstract class Connection
 	 */
 	function readFrame(float $timeout = 3.000)
 	{
-		if($this->stream === null || @feof($this->stream))
-		{
-			if($this->status == Connection::STATUS_OPEN)
-			{
-				$this->status = Connection::STATUS_LOST;
-			}
-			return null;
-		}
 		$frame = null;
 		$start = microtime(true);
 		do

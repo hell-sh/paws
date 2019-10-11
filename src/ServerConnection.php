@@ -65,27 +65,37 @@ class ServerConnection extends Connection
 
 	function writeFrame(Frame $frame): ServerConnection
 	{
-		fwrite($this->stream, chr(0x80 | $frame::OP_CODE));
-		$length = strlen($frame->data);
-		if($length < 0x7E)
+		if($this->stream === null || @feof($this->stream))
 		{
-			fwrite($this->stream, chr(0x80 | $length));
-		}
-		else if($length < 0xFFFF)
-		{
-			fwrite($this->stream, "\xFE");
-			fwrite($this->stream, pack("n", $length));
+			if($this->status == Connection::STATUS_OPEN)
+			{
+				$this->status = Connection::STATUS_LOST;
+			}
 		}
 		else
 		{
-			fwrite($this->stream, "\xFF");
-			fwrite($this->stream, pack("n", $length));
-		}
-		$mask = pack("N", rand(1, 0x7FFFFFFF));
-		fwrite($this->stream, $mask);
-		for($i = 0; $i < $length; $i++)
-		{
-			fwrite($this->stream, chr(ord(substr($frame->data, $i, 1)) ^ ord(substr($mask, $i % 4, 1))));
+			@fwrite($this->stream, chr(0x80 | $frame::OP_CODE));
+			$length = strlen($frame->data);
+			if($length < 0x7E)
+			{
+				@fwrite($this->stream, chr(0x80 | $length));
+			}
+			else if($length < 0xFFFF)
+			{
+				@fwrite($this->stream, "\xFE");
+				@fwrite($this->stream, pack("n", $length));
+			}
+			else
+			{
+				@fwrite($this->stream, "\xFF");
+				@fwrite($this->stream, pack("n", $length));
+			}
+			$mask = pack("N", rand(1, 0x7FFFFFFF));
+			@fwrite($this->stream, $mask);
+			for($i = 0; $i < $length; $i++)
+			{
+				@fwrite($this->stream, chr(ord(substr($frame->data, $i, 1)) ^ ord(substr($mask, $i % 4, 1))));
+			}
 		}
 		return $this;
 	}
