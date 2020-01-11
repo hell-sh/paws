@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 class TextFrame extends Frame
 {
 	const OP_CODE = 1;

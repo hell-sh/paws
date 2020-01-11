@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 use RuntimeException;
 /** A websocket connection. */
 abstract class Connection

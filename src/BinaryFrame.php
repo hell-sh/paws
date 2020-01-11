@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 class BinaryFrame extends Frame
 {
 	function __toString()

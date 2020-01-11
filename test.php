@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 require_once "vendor/autoload.php";
-use paws\
+use WebSocket\
 {Server, ServerConnection, TextFrame};
 class PawsTest
 {

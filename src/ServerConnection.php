@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 use Exception;
 /** A client-to-server websocket connection. */
 class ServerConnection extends Connection

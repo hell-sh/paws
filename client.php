@@ -4,30 +4,29 @@ if(empty($argv[1]))
 	die("Syntax: php client.php <url>\n");
 }
 require "vendor/autoload.php";
-use hellsh\pai;
-use paws\
+use Asyncore\
+{Asyncore, Condition, stdin};
+use WebSocket\
 {Connection, ServerConnection, TextFrame};
 echo "Connecting...";
 $con = new ServerConnection($argv[1]);
 echo " Connection established.";
-pai::init();
-echo " Client ready.\n";
-do
+stdin::init(function(string $line) use (&$con)
 {
-	$start = microtime(true);
+	$con->writeFrame(new TextFrame($line))
+		->flush();
+}, false);
+echo " Client ready.\n";
+$open_condition = new Condition(function() use (&$con)
+{
+	return $con->status == Connection::STATUS_OPEN;
+});
+$open_condition->add(function() use (&$con)
+{
 	if($frame = $con->readFrame(0))
 	{
 		echo $frame."\n";
 	}
-	if(pai::hasLine())
-	{
-		$con->writeFrame(new TextFrame(pai::getLine()))
-			->flush();
-	}
-	if(($remaining = (0.001 - (microtime(true) - $start))) > 0)
-	{
-		time_nanosleep(0, $remaining * 1000000000);
-	}
-}
-while($con->status == Connection::STATUS_OPEN);
+}, 0.001);
+Asyncore::loop();
 echo "\nConnection closed.\n";

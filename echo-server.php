@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 require "vendor/autoload.php";
-use paws\
+use WebSocket\
 {ClientConnection, Frame, Server};
 $server = new Server([
 	Server::createStream("0.0.0.0:80"),

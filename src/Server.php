@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 use Exception;
 use SplObjectStorage;
 class Server

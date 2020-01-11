@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 abstract class Frame
 {
 	const OP_CODE = 2;

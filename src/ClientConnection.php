@@ -1,5 +1,5 @@
 <?php
-namespace paws;
+namespace WebSocket;
 /** A server-to-client websocket connection. */
 class ClientConnection extends Connection
 {
