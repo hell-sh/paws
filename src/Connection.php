@@ -185,7 +185,6 @@ abstract class Connection
 					$frame = new TextFrame($data);
 					break;
 				case 2: // Binary Frame
-				case 5:
 					$frame = new BinaryFrame($data);
 					break;
 				case 8: // Close
