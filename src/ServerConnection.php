@@ -1,6 +1,7 @@
 <?php
 namespace WebSocket;
 use Exception;
+use InvalidArgumentException;
 /** A client-to-server websocket connection. */
 class ServerConnection extends Connection
 {
@@ -11,11 +12,17 @@ class ServerConnection extends Connection
 	function __construct(string $url)
 	{
 		$components = parse_url($url);
-		assert(in_array($components["scheme"], [
+		if(!in_array($components["scheme"], [
 			"ws",
 			"wss"
-		]));
-		assert(!empty($components["host"]));
+		]))
+		{
+			throw new InvalidArgumentException("Given URL doesn't have ws or wss scheme: $url");
+		}
+		if(empty($components["host"]))
+		{
+			throw new InvalidArgumentException("Couldn't extract host from given URL: $url");
+		}
 		if(!array_key_exists("path", $components))
 		{
 			$components["path"] = "/";
