@@ -25,6 +25,12 @@ abstract class Connection
 	 */
 	public $status = Connection::STATUS_CONNECT_FAILED;
 	/**
+	/**
+	 * @var int $close_code
+	 * @since 0.5.1
+	 */
+	public $close_code = 0;
+	/**
 	 * @var resource|null $resource
 	 */
 	public $stream;
@@ -186,6 +192,7 @@ abstract class Connection
 					@fclose($this->stream);
 					$this->stream = null;
 					$this->status = Connection::STATUS_CLOSED;
+					$this->close_code = unpack("ncode", substr($data, 0, 2))["code"];
 					break;
 				case 9: // Ping
 					if(!$this instanceof ServerConnection)
