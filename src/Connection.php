@@ -99,28 +99,25 @@ abstract class Connection
 			{
 				if((microtime(true) - $start) >= $timeout)
 				{
-					return null;
+					throw new RuntimeException("Timed out reading header");
 				}
 				$header_2 = @fgetc($this->stream);
 			}
 			$header_2 = ord($header_2);
 			$payload_len = $header_2 & 0x7F;
-			if($payload_len >= 0x7E)
+			if($payload_len >= 126)
 			{
-				$ext_len = ($payload_len == 0x7F ? 8 : 2);
+				$ext_len = ($payload_len == 127 ? 8 : 2);
 				$header_3 = @fread($this->stream, $ext_len);
-				while($header_3 === null)
+				if($header_3 === null || strlen($header_3) != $ext_len)
 				{
-					if((microtime(true) - $start) >= $timeout)
-					{
-						return null;
-					}
-					$header_3 = @fread($this->stream, $ext_len);
+					throw new RuntimeException("Failed to read extended length data");
 				}
 				$payload_len = 0;
 				for($i = 0; $i < $ext_len; $i++)
 				{
-					$payload_len += ord($header_3[$i]) << (($ext_len - $i - 1) * 8);
+					$payload_len <<= 8;
+					$payload_len += ord($header_3[$i]);
 				}
 			}
 			if($header_2 & 0x80)
@@ -150,9 +147,10 @@ abstract class Connection
 				{
 					if((microtime(true) - $start) >= $timeout)
 					{
-						return null;
+						throw new RuntimeException("Timed out reading payload");
 					}
 					$payload .= fread($this->stream, $payload_len - strlen($payload));
+					$timeout += 0.1;
 				}
 				if(isset($mask))
 				{
