@@ -13,8 +13,8 @@
 		}
 	},
 	"require": {
-		"php": "^7.0",
-		"ext-openssl": "^7.0"
+		"php": ">=7.0",
+		"ext-openssl": "*"
 	},
 	"require-dev": {
 		"hell-sh/asyncore": "^2.0",
