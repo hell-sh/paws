@@ -4,7 +4,7 @@ use Exception;
 use SplObjectStorage;
 class Server
 {
-	const HTTP_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nServer: hell-sh/paws\r\n\r\n";
+	const HTTP_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nServer: hell-sh/websocket\r\n\r\n";
 	/**
 	 * The streams the server listens for new connections on.
 	 *
@@ -130,7 +130,7 @@ class Server
 					fclose($client);
 					continue;
 				}
-				fwrite($client, "HTTP/1.1 101 WebSocket Upgrade\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nServer: hell-sh/paws\r\nSec-WebSocket-Accept: ".Server::hashKey(explode("\r\n", trim(substr($header, $key_pos + 18)))[0])."\r\n\r\n");
+				fwrite($client, "HTTP/1.1 101 WebSocket Upgrade\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nServer: hell-sh/websocket\r\nSec-WebSocket-Accept: ".Server::hashKey(explode("\r\n", trim(substr($header, $key_pos + 18)))[0])."\r\n\r\n");
 				$con = new ClientConnection($client, $request[1]);
 				$this->clients->attach($con);
 				if($this->connect_function)
