@@ -13,11 +13,11 @@
 		}
 	},
 	"require": {
-		"php": ">=7.0",
-		"ext-openssl": "*"
+		"php": ">=7.1",
+		"ext-openssl": "*",
+		"hell-sh/asyncore": "^2.2"
 	},
 	"require-dev": {
-		"hell-sh/asyncore": "^2.0",
 		"hell-sh/nose": "^1.1"
 	}
 }

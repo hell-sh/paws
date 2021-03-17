@@ -12,14 +12,4 @@ $server->frame_function = function(ClientConnection $con, Frame $frame)
 		->flush();
 };
 echo "Listening for connections on ws://localhost:80 and wss://localhost:443\n";
-do
-{
-	$start = microtime(true);
-	$server->accept();
-	$server->handle();
-	if(($remaining = (0.001 - (microtime(true) - $start))) > 0)
-	{
-		time_nanosleep(0, $remaining * 1000000000);
-	}
-}
-while(true);
+\Asyncore\Asyncore::loop();
