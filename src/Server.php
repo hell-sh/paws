@@ -46,6 +46,8 @@ class Server extends \Asyncore\Server
 		$this->clients = new SplObjectStorage();
 		$this->onClient(function($client)
 		{
+			stream_set_blocking($client, true);
+			stream_set_timeout($client, 1);
 			$header = @fread($client, 4096);
 			stream_set_blocking($client, false);
 			if(!stristr($header, "Upgrade: WebSocket\r\n"))
