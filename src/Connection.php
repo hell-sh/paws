@@ -189,7 +189,7 @@ abstract class Connection
 					@fclose($this->stream);
 					$this->stream = null;
 					$this->status = Connection::STATUS_CLOSED;
-					$this->close_code = unpack("ncode", substr($data, 0, 2))["code"];
+					$this->close_code = @unpack("ncode", substr($data, 0, 2))["code"];
 					break;
 				case 9: // Ping
 					if(!$this instanceof ServerConnection)
