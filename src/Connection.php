@@ -149,7 +149,13 @@ abstract class Connection
 					{
 						throw new RuntimeException("Timed out reading payload");
 					}
-					$payload .= fread($this->stream, $payload_len - strlen($payload));
+					$read = @fread($this->stream, $payload_len - strlen($payload));
+					if($read === false)
+					{
+						$this->close();
+						return null;
+					}
+					$payload .= $read;
 					$timeout += 0.1;
 				}
 				if(isset($mask))
