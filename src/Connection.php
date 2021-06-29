@@ -127,7 +127,7 @@ abstract class Connection
 				{
 					if((microtime(true) - $start) >= $timeout)
 					{
-						return null;
+						throw new RuntimeException("Timed out reading mask");
 					}
 					$mask = @fread($this->stream, 4);
 				}
