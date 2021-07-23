@@ -35,16 +35,22 @@ abstract class Connection
 	 */
 	public $stream;
 
-	function close()
+	protected function ensureOpen(): bool
 	{
-		if($this->stream === null || @feof($this->stream))
+		if($this->stream === null || feof($this->stream))
 		{
 			if($this->status == Connection::STATUS_OPEN)
 			{
 				$this->status = Connection::STATUS_LOST;
 			}
+			return false;
 		}
-		else
+		return true;
+	}
+
+	function close()
+	{
+		if($this->ensureOpen())
 		{
 			$this->status = Connection::STATUS_CLOSED;
 			@fwrite($this->stream, "\x88\x00");
@@ -61,14 +67,7 @@ abstract class Connection
 
 	function flush(): Connection
 	{
-		if($this->stream === null || @feof($this->stream))
-		{
-			if($this->status == Connection::STATUS_OPEN)
-			{
-				$this->status = Connection::STATUS_LOST;
-			}
-		}
-		else
+		if($this->ensureOpen())
 		{
 			@fflush($this->stream);
 		}

@@ -26,14 +26,7 @@ class ClientConnection extends Connection
 
 	function writeFrame(Frame $frame): ClientConnection
 	{
-		if($this->stream === null || @feof($this->stream))
-		{
-			if($this->status == Connection::STATUS_OPEN)
-			{
-				$this->status = Connection::STATUS_LOST;
-			}
-		}
-		else
+		if($this->ensureOpen())
 		{
 			@fwrite($this->stream, chr(0x80 | $frame::OP_CODE));
 			$length = strlen($frame->data);
