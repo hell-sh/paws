@@ -43,6 +43,7 @@ abstract class Connection
 			{
 				$this->status = Connection::STATUS_LOST;
 			}
+			fclose($this->stream);
 			return false;
 		}
 		return true;
